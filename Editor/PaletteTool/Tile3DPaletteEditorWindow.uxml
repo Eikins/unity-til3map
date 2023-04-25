@@ -1,0 +1,30 @@
+<UXML
+    xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xmlns:engine="UnityEngine.UIElements"
+    xmlns:editor="UnityEditor.UIElements" 
+    xmlns:til3map="Til3mapEditor.UIElements" 
+    noNamespaceSchemaLocation="../../../../../../../UIElementsSchema/UIElements.xsd"
+    editor-extension-mode="False">
+
+    <Style src="Styles/Tile3DPaletteEditorWindow.uss" />
+    
+    <!-- Header -->
+    <engine:TwoPaneSplitView name="body" fixed-pane-initial-dimension="500" orientation="Horizontal">
+        
+        <!-- Left Side : Palette -->
+        <engine:VisualElement name="palette-body">
+            <editor:ObjectField name="palette-field" label="Palette" allow-scene-objects="false" />
+
+            <engine:VisualElement class="palette-container">
+                <til3map:PaletteView class="palette-view"/>
+            </engine:VisualElement>
+        </engine:VisualElement>
+
+        <!-- Right Side : Inspector -->
+        <engine:VisualElement name="inspector-body">
+            <editor:ObjectField name="tile-field" label="Tile" allow-scene-objects="false" />
+            <engine:IMGUIContainer name="tile-unity-inspector" />
+        </engine:VisualElement>
+
+    </engine:TwoPaneSplitView >
+</UXML>

@@ -1,0 +1,25 @@
+<UXML
+    xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xmlns:engine="UnityEngine.UIElements"
+    xmlns:editor="UnityEditor.UIElements" 
+    xmlns:til3map="Til3mapEditor.UIElements" 
+    noNamespaceSchemaLocation="../../../../../../../../UIElementsSchema/UIElements.xsd"
+    editor-extension-mode="False">
+
+    <Style src="Styles/Tilemap3DEditorWindow.uss" />
+    
+    <!-- Header -->
+    <engine:VisualElement name="body">
+        
+        <engine:VisualElement name="tilemap-toolbar">
+                <engine:IMGUIContainer name="tilemap-toolbar" class="tilemap-toolbar-container" />
+        </engine:VisualElement>
+
+        <editor:ObjectField name="palette-field" label="Palette" allow-scene-objects="false" />
+
+        <engine:VisualElement class="palette-container">
+            <til3map:PaletteView class="palette-view"/>
+        </engine:VisualElement>
+    </engine:VisualElement>
+
+</UXML>
