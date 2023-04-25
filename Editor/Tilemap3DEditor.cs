@@ -40,6 +40,7 @@ namespace Til3mapEditor
         {
             GameObject go = new GameObject("Tilemap 3D");
             go.AddComponent<Tilemap3D>();
+            go.AddComponent<Tilemap3DRenderer>();
             GameObjectUtility.SetParentAndAlign(go, menuCommand.context as GameObject);
             Undo.RegisterCreatedObjectUndo(go, "Create " + go.name);
             Selection.activeObject = go;
