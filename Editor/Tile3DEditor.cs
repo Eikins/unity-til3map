@@ -17,25 +17,42 @@ namespace Til3mapEditor
     public class Tile3DEditor : Editor
     {
         private PreviewRenderUtility _previewRenderUtility = null;
-        private List<string> _materialNames = new List<string>();
+        private List<string> _noGPUInstancingmaterialNames = new List<string>();
+        private List<int> _nullMaterialIndices = new List<int>();
 
         public override void OnInspectorGUI()
         {
             base.OnInspectorGUI();
-            _materialNames.Clear();
+            CheckMaterials();
+        }
+
+        private void CheckMaterials()
+        {
+            _noGPUInstancingmaterialNames.Clear();
+            _nullMaterialIndices.Clear();
 
             var tile = target as Tile3D;
-            foreach (var material in tile.Materials)
+            for (int i = 0; i < tile.Materials.Length; i++)
             {
-                if (!material.enableInstancing)
+                var material = tile.Materials[i];
+                if (material == null)
                 {
-                    _materialNames.Add(material.name);
+                    _nullMaterialIndices.Add(i);
+                }
+                else if (!material.enableInstancing)
+                {
+                    _noGPUInstancingmaterialNames.Add(material.name);
                 }
             }
 
-            if (_materialNames.Count > 0)
+            if (_nullMaterialIndices.Count > 0)
             {
-                EditorGUILayout.HelpBox($"Material(s): [{string.Join(", ", _materialNames)}] should have GPU Instancing Enabled. Otherwise, this will cause huge performance issues.", MessageType.Warning);
+                EditorGUILayout.HelpBox($"Material(s): [{string.Join(", ", _nullMaterialIndices)}] are not set. Tile will not be valid.", MessageType.Error);
+
+            }
+            if (_noGPUInstancingmaterialNames.Count > 0)
+            {
+                EditorGUILayout.HelpBox($"Material(s): [{string.Join(", ", _noGPUInstancingmaterialNames)}] should have GPU Instancing Enabled. Otherwise, this will cause huge performance issues.", MessageType.Warning);
             }
         }
 

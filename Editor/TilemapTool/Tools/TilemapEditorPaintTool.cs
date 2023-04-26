@@ -81,8 +81,10 @@ namespace Til3mapEditor
 
         private void DrawHandle(Vector3Int position)
         {
-            Handles.color = Editor.IsEraserEnabled ? Color.red : Color.white;
-            Handles.DrawWireCube(position + new Vector3(0.5f, 0.0f, 0.5f), new Vector3(1.0f, 0.0f, 1.0f));
+            Handles.color = Editor.IsEraserEnabled ? Color.red : IsPlaceable ? Color.white : Color.yellow;
+            var size = Editor.Tile.Size;
+            Handles.DrawWireCube(position + (Vector3) size / 2.0f, Editor.Tile.Size);
         }
+
     }
 }

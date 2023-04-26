@@ -12,39 +12,29 @@ namespace Til3map
 {
     public class Tilemap3DBuilder
     {
+
         private Tilemap3D _tilemap;
-        private Dictionary<Vector3Int, Tile3D> _positions;
+        private Tilemap3DSpatialIndex _spatialIndex;
         private List<Tile3DInstances> _tiles;
 
         public Tilemap3DBuilder(Tilemap3D tilemap)
         {
             _tilemap = tilemap;
             _tiles = tilemap.Tiles;
-            _positions = new Dictionary<Vector3Int, Tile3D>();
-            ReadPositionsFromTilemap();
+            _spatialIndex = new Tilemap3DSpatialIndex(tilemap);
         }
 
-        private void ReadPositionsFromTilemap()
+        public bool CanPlaceTile(Tile3D tile, TilePose pose)
         {
-            foreach (var instances in _tiles)
-            {
-                for (int j = 0; j < instances.poses.Count; j++)
-                {
-                    _positions.Add(instances.poses[j].position, instances.tile);
-                }
-            }
-        }
-
-        public bool HasTile(Vector3Int position)
-        {
-            return _positions.ContainsKey(position);
+            if (tile == null) return false;
+            return _spatialIndex.HasTileWithin(tile.GetBounds(pose));
         }
 
         public bool AddTile(Tile3D tile, TilePose pose)
         {
             if (tile == null) return false;
 
-            if (!_tilemap.IsInBounds(pose) || HasTile(pose.position))
+            if (!_tilemap.IsInBounds(pose) || !_spatialIndex.AddTileAt(tile, pose))
             {
                 return false;
             }
@@ -67,31 +57,59 @@ namespace Til3map
                 _tiles[index].poses.Add(pose);
             }
 
-            _positions.Add(pose.position, tile);
             _tilemap.OnTilesChanged?.Invoke();
 
             return true;
         }
 
-        public bool RemoveTile(Vector3Int position)
+        public bool RemoveTiles(BoundsInt bounds)
         {
-            if (_positions.TryGetValue(position, out var tile))
+            var nodes = new List<Tilemap3DSpatialIndex.Node>();
+            _spatialIndex.GetTilesWithin(nodes, bounds);
+            if (nodes.Count == 0)
             {
-                int index = _tiles.FindIndex((instance) => instance.tile == tile);
+                return false;
+            }
+
+            foreach (var node in nodes)
+            {
+                int index = _tiles.FindIndex((instance) => instance.tile == node.tile);
 
                 if (index != -1)
                 {
-                    _tiles[index].poses.RemoveAll((pose) => pose.position == position);
+                    _tiles[index].poses.RemoveAll((pose) => pose.position == node.pose.position);
+
+                    if (_tiles[index].poses.Count == 0)
+                    {
+                        _tiles.RemoveAt(index);
+                    }
+                }
+
+                _spatialIndex.Remove(node);
+            }
+
+            _tilemap.OnTilesChanged?.Invoke();
+            return true;
+        }
+
+        public bool RemoveTile(Vector3Int position)
+        {
+            var node = _spatialIndex.RemoveTileAt(position);
+            if (node != null)
+            {
+                int index = _tiles.FindIndex((instance) => instance.tile == node.tile);
+
+                if (index != -1)
+                {
+                    _tiles[index].poses.RemoveAll((pose) => pose.position == node.pose.position);
 
                     if (_tiles[index].poses.Count == 0)
                     {
                         _tiles.RemoveAt(index);
                     }
 
-                    _positions.Remove(position);
                     _tilemap.OnTilesChanged?.Invoke();
                 }
-
                 return true;
             }
 

@@ -18,14 +18,21 @@ namespace Til3map
         [SerializeField] private Material[] _materials = null;
 
         [Header("Settings")]
+        [SerializeField] private Vector3Int _size = Vector3Int.one;
         [SerializeField] private bool _canBeRotated = true;
         [SerializeField] private TransformValue _transform = TransformValue.Default;
 
         public Mesh Mesh => _mesh;
         public Material[] Materials => _materials;
+        public Vector3Int Size => _size;
         public bool CanBeRotated => _canBeRotated;
         public Matrix4x4 TransformMatrix => _transform.ToMatrix4x4();
 
+        public BoundsInt GetBounds(TilePose pose)
+        {
+            // Todo : Take in account the rotation.
+            return new BoundsInt(pose.position, _size);
+        }
 
         private void OnValidate()
         {
@@ -33,6 +40,10 @@ namespace Til3map
             {
                 _materials = new Material[_mesh.subMeshCount];
             }
+
+            _size.x = Mathf.Max(_size.x, 1);
+            _size.y = Mathf.Max(_size.y, 1);
+            _size.z = Mathf.Max(_size.z, 1);
         }
 
         public bool IsValid()

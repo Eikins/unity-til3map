@@ -14,16 +14,15 @@ namespace Til3mapEditor
 {
     public abstract class TilemapEditorTool
     {
-        private TilemapEditor _editor;
-        private Vector3Int _tilePosition;
 
-        protected TilemapEditor Editor => _editor;
-        protected Vector3Int TilePosition => _tilePosition;
-        protected TilePose TilePose => new TilePose() { position = _tilePosition, rotation = Editor.Rotation };
+        protected TilemapEditor Editor { get; private set; }
+        protected Vector3Int TilePosition { get; private set; }
+        protected bool IsPlaceable { get; private set; }
+        protected TilePose TilePose => new TilePose() { position = TilePosition, rotation = Editor.Rotation };
 
         public TilemapEditorTool(TilemapEditor editor)
         {
-            _editor = editor;
+            Editor = editor;
         }
 
         public abstract GUIContent toolbarIcon { get; }
@@ -38,14 +37,15 @@ namespace Til3mapEditor
         {
             if (RaycastTilePosition(out Vector3Int position))
             {
-                _tilePosition = position;
+                TilePosition = position;
+                IsPlaceable = Editor.TilemapBuilder.CanPlaceTile(Editor.Tile, TilePose);
             }
         }
 
         private bool RaycastTilePosition(out Vector3Int position)
         {
-            var tilemap = _editor.Tilemap;
-            var height = _editor.Height;
+            var tilemap = Editor.Tilemap;
+            var height = Editor.Height;
 
             Ray ray = HandleUtility.GUIPointToWorldRay(Event.current.mousePosition);
             Plane plane = new Plane(tilemap.transform.up, tilemap.transform.position + tilemap.transform.up * (0.1f + height));
@@ -68,22 +68,18 @@ namespace Til3mapEditor
         protected void PutOrRemoveTile(Tile3D tile, TilePose tilePose, bool erase)
         {
             if (tile == null) return;
-            if (!_editor.Tilemap.IsInBounds(tilePose)) return;
+            if (!Editor.Tilemap.IsInBounds(tilePose)) return;
 
-            var tilemapBuilder = _editor.TilemapBuilder;
-            var tilemap = _editor.Tilemap;
+            var tilemapBuilder = Editor.TilemapBuilder;
+            var tilemap = Editor.Tilemap;
 
-            if (tilemapBuilder.HasTile(tilePose.position))
-            {
-                tilemapBuilder.RemoveTile(tilePose.position);
-                EditorUtility.SetDirty(tilemap);
-            }
-
+            tilemapBuilder.RemoveTiles(tile.GetBounds(tilePose));
             if (!erase)
             {
                 tilemapBuilder.AddTile(tile, tilePose);
-                EditorUtility.SetDirty(tilemap);
             }
+
+            EditorUtility.SetDirty(tilemap);
         }
     }
 }
