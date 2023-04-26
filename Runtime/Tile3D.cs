@@ -55,12 +55,10 @@ namespace Til3map
 
 #if UNITY_EDITOR
         [Header("Editor Specific")]
-        [SerializeField] private Vector3 _previewCameraPosition = new Vector3(0.0f, 10.0f, 0.0f);
-        [SerializeField] private Vector3 _previewCameraRotation = new Vector3(90.0f, 0.0f, 0.0f);
-        [SerializeField] private float _previewCameraSize = 1.0f;
+        [SerializeField] private Vector2 _previewCameraAngles = new Vector2(45.0f, 45.0f);
+        [SerializeField] private float _previewCameraSize = 2.0f;
 
-        public Vector3 EditorOnlyPreviewCameraPosition => _previewCameraPosition;
-        public Vector3 EditorOnlyPreviewCameraRotation => _previewCameraRotation;
+        public Vector2 EditorOnlyPreviewCameraAngles => _previewCameraAngles;
         public float EditorOnlyPreviewCameraSize => _previewCameraSize;
 #endif
     }

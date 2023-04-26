@@ -68,8 +68,8 @@ namespace Til3mapEditor
             }
 
             // Register Tile Inspector
-            IMGUIContainer toolbarContainer = rootVisualElement.Query<IMGUIContainer>(name = "tile-unity-inspector").First();
-            toolbarContainer.onGUIHandler += DrawTileInspector;
+            IMGUIContainer tileInspector = rootVisualElement.Query<IMGUIContainer>(name = "tile-unity-inspector").First();
+            tileInspector.onGUIHandler += DrawTileInspector;
 
 
             // Initialize Palette
@@ -86,7 +86,8 @@ namespace Til3mapEditor
         {
             if (_tileEditor)
             {
-                _tileEditor.DrawDefaultInspector();
+                EditorGUIUtility.wideMode = true;
+                _tileEditor.OnInspectorGUI();
             }
         }
 

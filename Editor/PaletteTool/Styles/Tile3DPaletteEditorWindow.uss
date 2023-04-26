@@ -36,4 +36,5 @@
 
 #tile-unity-inspector {
     margin: 12px;
+    flex-grow: 1;
 }

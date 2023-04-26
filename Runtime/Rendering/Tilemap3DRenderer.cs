@@ -29,7 +29,7 @@ namespace Til3map
 
         private void Update()
         {
-            if (_isDirty)
+            if (_isDirty || transform.hasChanged)
             {
                 BuildTileRenderLists();
             }
