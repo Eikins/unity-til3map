@@ -144,7 +144,7 @@ namespace Til3mapEditor
             {
                 name = "Tilemap 3D Editor Preview"
             };
-            //RenderPipelineManager.endCameraRendering += OnEndCameraRendering;
+            RenderPipelineManager.endCameraRendering += OnEndCameraRendering;
             EditorApplication.playModeStateChanged += OnPlayModeStateChanged;
 
             OnSelectionChange();
@@ -154,7 +154,7 @@ namespace Til3mapEditor
         {
             SceneView.duringSceneGui -= OnSceneGUI;
 
-            //RenderPipelineManager.endCameraRendering -= OnEndCameraRendering;
+            RenderPipelineManager.endCameraRendering -= OnEndCameraRendering;
             EditorApplication.playModeStateChanged -= OnPlayModeStateChanged;
 
             _commandBuffer.Release();

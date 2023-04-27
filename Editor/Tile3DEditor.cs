@@ -39,22 +39,9 @@ namespace Til3mapEditor
 
             var tile = target as Tile3D;
 
-            // Setup Camera
-            var camera = _inspectorPreview.camera;
             var focusPoint = (Vector3)tile.Size / 2.0f - new Vector3(0.5f, 0.0f, 0.5f);
+            SetupPreview(_inspectorPreview, tile, focusPoint);
 
-            Quaternion lookRotation = Quaternion.Euler(tile.EditorOnlyPreviewCameraAngles);
-            Vector3 lookDirection = lookRotation * Vector3.forward;
-            Vector3 lookPosition = focusPoint - lookDirection * tile.Size.magnitude * 2.0f;
-            camera.transform.SetPositionAndRotation(lookPosition, lookRotation);
-
-            camera.orthographic = true;
-            camera.orthographicSize = tile.EditorOnlyPreviewCameraSize / 2.0f;
-            camera.farClipPlane = 30.0f;
-            camera.nearClipPlane = 0.01f;
-            camera.cameraType = CameraType.SceneView;
-
-            _inspectorPreview.lights[0].transform.forward = camera.transform.forward;
             _inspectorPreview.BeginPreview(rect, GUIStyle.none);
 
             for (int i = 0; i < tile.Materials.Length; i++)
@@ -62,9 +49,9 @@ namespace Til3mapEditor
                 _inspectorPreview.DrawMesh(tile.Mesh, tile.TransformMatrix, tile.Materials[i], i);
             }
 
-            _inspectorPreview.Render();
+            _inspectorPreview.Render(true);
 
-            Handles.SetCamera(camera);
+            Handles.SetCamera(_inspectorPreview.camera);
             var zTest = Handles.zTest = CompareFunction.LessEqual;
             using (new Handles.DrawingScope(Color.white))
             {
@@ -127,33 +114,25 @@ namespace Til3mapEditor
         private void OnDisable()
         {
             _inspectorPreview?.Cleanup();
+            _previewRenderUtility?.Cleanup();
         }
 
         public override Texture2D RenderStaticPreview(string assetPath, Object[] subAssets, int width, int height)
         {
             Tile3D tile = target as Tile3D;
 
+            if (_previewRenderUtility == null)
+            {
+                _previewRenderUtility = new PreviewRenderUtility();
+            }
+
             if (tile == null || !tile.IsValid())
                 return null;
 
             var rect = new Rect(0, 0, width, height);
 
-            _previewRenderUtility = new PreviewRenderUtility();
-            var focusPoint = (Vector3) tile.Size / 2.0f - new Vector3(0.5f, 0.0f, 0.5f);
-            // Setup Camera
-            Quaternion lookRotation = Quaternion.Euler(tile.EditorOnlyPreviewCameraAngles);
-            Vector3 lookDirection = lookRotation * Vector3.forward;
-            Vector3 lookPosition = focusPoint - lookDirection * tile.Size.magnitude * 2.0f;
-            _previewRenderUtility.camera.transform.SetPositionAndRotation(lookPosition, lookRotation);
-
-            _previewRenderUtility.camera.orthographic = true;
-            _previewRenderUtility.camera.orthographicSize = tile.EditorOnlyPreviewCameraSize / 2.0f;
-            _previewRenderUtility.camera.farClipPlane = 30.0f;
-            _previewRenderUtility.camera.nearClipPlane = 0.01f;
-
-            _previewRenderUtility.camera.backgroundColor = Color.cyan;
-
-            _previewRenderUtility.lights[0].transform.forward = _previewRenderUtility.camera.transform.forward;
+            var focusPoint = (Vector3)tile.Size / 2.0f - new Vector3(0.5f, 0.0f, 0.5f);
+            SetupPreview(_previewRenderUtility, tile, focusPoint);
 
             // Draw Tile
             _previewRenderUtility.BeginStaticPreview(rect);
@@ -162,14 +141,31 @@ namespace Til3mapEditor
                 _previewRenderUtility.DrawMesh(tile.Mesh, tile.TransformMatrix, tile.Materials[i], i);
             }
 
-            _previewRenderUtility.Render();
+            _previewRenderUtility.Render(true);
 
             var tex = _previewRenderUtility.EndStaticPreview();
 
-            _previewRenderUtility.Cleanup();
-            _previewRenderUtility = null;
-
             return tex;
+        }
+
+        private void SetupPreview(PreviewRenderUtility previewRenderUtility, Tile3D tile, Vector3 focusPoint)
+        {
+            // Setup Camera
+            var camera = previewRenderUtility.camera;
+
+            Quaternion lookRotation = Quaternion.Euler(tile.EditorOnlyPreviewCameraAngles);
+            Vector3 lookDirection = lookRotation * Vector3.forward;
+            Vector3 lookPosition = focusPoint - lookDirection * tile.Size.magnitude * 2.0f;
+            camera.transform.SetPositionAndRotation(lookPosition, lookRotation);
+
+            camera.orthographic = true;
+            camera.orthographicSize = tile.EditorOnlyPreviewCameraSize / 2.0f;
+            camera.farClipPlane = 30.0f;
+            camera.nearClipPlane = 0.01f;
+            camera.cameraType = CameraType.SceneView;
+
+            previewRenderUtility.ambientColor = Color.gray;
+            previewRenderUtility.lights[0].transform.forward = camera.transform.forward;
         }
     }
 }
