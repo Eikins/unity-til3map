@@ -1,0 +1,42 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 857b0e4e0d1b39f4398c9a6f1938fc70, type: 3}
+  m_Name: palette_cliffs
+  m_EditorClassIdentifier: 
+  _tiles:
+  - {fileID: 11400000, guid: 6f03d1b5d9a9a984a83d04d53b1ecce0, type: 2}
+  - {fileID: 11400000, guid: 2d2b7d998755df441977d2e74283d947, type: 2}
+  - {fileID: 11400000, guid: d6ca4581dcf6481479e4bf8ca54c6acf, type: 2}
+  - {fileID: 11400000, guid: 26af9f1aa7227004394ed39fc63dccc6, type: 2}
+  - {fileID: 11400000, guid: 517a3fb2dbdfe054b866fc53ba33e640, type: 2}
+  - {fileID: 11400000, guid: a5f58928fae0205459a5acfca1d58b5b, type: 2}
+  - {fileID: 11400000, guid: 433912739182cab4a8ddc0d68b5c32c1, type: 2}
+  - {fileID: 11400000, guid: 5531d6f776a003a4f9008d8078db2c44, type: 2}
+  - {fileID: 11400000, guid: c875ebc7539d5e84e81147cc73ef4e1c, type: 2}
+  - {fileID: 11400000, guid: 60a401a618b28184dadd48146e9acfe1, type: 2}
+  - {fileID: 11400000, guid: ab41b75dfca2cf2468ee5f89df9ea091, type: 2}
+  - {fileID: 11400000, guid: 1e32c904995847d4ab595af943fa7fd0, type: 2}
+  - {fileID: 11400000, guid: 53657a4dd0e284547ae57ba97bbd9ae4, type: 2}
+  _positions:
+  - {x: 1, y: 0}
+  - {x: 2, y: 0}
+  - {x: 3, y: 0}
+  - {x: 5, y: 0}
+  - {x: 7, y: 0}
+  - {x: 8, y: 0}
+  - {x: 9, y: 0}
+  - {x: 1, y: 2}
+  - {x: 2, y: 2}
+  - {x: 3, y: 2}
+  - {x: 1, y: 3}
+  - {x: 2, y: 3}
+  - {x: 3, y: 3}

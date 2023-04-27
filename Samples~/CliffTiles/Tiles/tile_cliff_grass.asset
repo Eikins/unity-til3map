@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 00cc2d7d8a62a864cb4b412f5975ca3b, type: 3}
+  m_Name: tile_cliff_grass
+  m_EditorClassIdentifier: 
+  _mesh: {fileID: -2727631756440057098, guid: 490f175806172ec4f9e944f05e8daf02, type: 3}
+  _materials:
+  - {fileID: 2100000, guid: a4b30ff2b0dca394287d81b3a9a659a0, type: 2}
+  _size: {x: 1, y: 1, z: 1}
+  _canBeRotated: 1
+  _transform:
+    position: {x: 0, y: 0, z: 0}
+    rotation: {x: 0, y: 0, z: 0, w: 1}
+    scale: {x: 1, y: 1, z: 1}
+  _previewCameraAngles: {x: 90, y: 0}
+  _previewCameraSize: 1

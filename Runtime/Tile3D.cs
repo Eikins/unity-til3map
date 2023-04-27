@@ -15,7 +15,7 @@ namespace Til3map
     {
         [Header("Renderer")]
         [SerializeField] private Mesh _mesh = null;
-        [SerializeField] private Material[] _materials = null;
+        [SerializeField] private Material[] _materials = new Material[0];
 
         [Header("Settings")]
         [SerializeField] private Vector3Int _size = Vector3Int.one;

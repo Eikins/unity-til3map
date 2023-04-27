@@ -1,20 +1,26 @@
 {
-    "name": "com.eikins.til3map",
-    "version": "0.1.3",
-    "displayName": "Til3map",
-    "description": "3D Tilemap tool.",
-    "unity": "2020.1",
-    "licensesUrl": "https://github.com/Eikins/unity-til3map/blob/main/LICENSE",
-    "dependencies": {
-   },
-   "keywords": [
-      "tilemap",
-      "til3map",
-      "3d"
-    ],
-    "author": {
-      "name": "Eikins",
-      "email": "noe@masse.pro",
-      "url": "https://noe.masse.pro/"
+  "name": "com.eikins.til3map",
+  "version": "0.1.4",
+  "displayName": "Til3map",
+  "description": "3D Tilemap tool.",
+  "unity": "2020.1",
+  "licensesUrl": "https://github.com/Eikins/unity-til3map/blob/main/LICENSE",
+  "dependencies": {},
+  "keywords": [
+    "tilemap",
+    "til3map",
+    "3d"
+  ],
+  "author": {
+    "name": "Eikins",
+    "email": "noe@masse.pro",
+    "url": "https://noe.masse.pro/"
+  },
+  "samples": [
+    {
+      "displayName": "Cliff Tiles",
+      "description": "Contains sample tiles with a demo scene.",
+      "path": "Samples~/CliffTiles"
     }
-  }
+  ]
+}
