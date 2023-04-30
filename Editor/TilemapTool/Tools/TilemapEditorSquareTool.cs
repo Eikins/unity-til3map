@@ -181,9 +181,9 @@ namespace Til3mapEditor
             foreach (var pos in _selection.allPositionsWithin)
             {
                 var refPos = pos - _startPosition;
-                if (refPos.x % Editor.Tile.Size.x == 0 &&
-                    refPos.y % Editor.Tile.Size.y == 0 &&
-                    refPos.z % Editor.Tile.Size.z == 0)
+                if (refPos.x % size.x == 0 &&
+                    refPos.y % size.y == 0 &&
+                    refPos.z % size.z == 0)
                 {
                     var pose = new TilePose() { 
                         position = pos, 
