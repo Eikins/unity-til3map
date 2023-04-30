@@ -27,6 +27,7 @@ namespace Til3map
         public void Clear()
         {
             Tiles.Clear();
+            OnTilesChanged?.Invoke();
         }
 
         public bool IsInBounds(TilePose tilePose)
