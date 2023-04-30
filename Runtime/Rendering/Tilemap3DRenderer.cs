@@ -32,6 +32,7 @@ namespace Til3map
             if (_isDirty || transform.hasChanged)
             {
                 BuildTileRenderLists();
+                transform.hasChanged = false;
             }
 
             foreach (var renderData in _renderDataList)
