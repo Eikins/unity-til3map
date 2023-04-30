@@ -22,6 +22,7 @@ namespace Til3mapEditor
         private BoundsInt _selection;
         private Vector3Int _startPosition;
         private bool _isExpanding = false;
+        private int _lastRotation = 0;
 
         private Vector3Int _lastTilePosition;
         private List<TilePose> _previewPoses;
@@ -79,6 +80,11 @@ namespace Til3mapEditor
 
         public override void OnSceneGUI()
         {
+            var tilemap = Editor.Tilemap;
+            Tile3D tile = Editor.Tile;
+
+            if (tilemap == null || tile == null) return;
+
             var controlID = GUIUtility.GetControlID(FocusType.Passive);
             switch (Event.current.type)
             {
@@ -90,9 +96,10 @@ namespace Til3mapEditor
                     {
                         _isExpanding = true;
                         _startPosition = TilePosition;
-                        UpdateSelection(TilePosition);
+                        UpdateSelection(TilePose);
 
                         _lastTilePosition = TilePosition;
+                        _lastRotation = Editor.Rotation;
                         UpdatePreviewPoses();
                     }
                     break;
@@ -102,7 +109,7 @@ namespace Til3mapEditor
                         if (_isExpanding)
                         {
                             _isExpanding = false;
-                            UpdateSelection(TilePosition);
+                            UpdateSelection(TilePose);
                             PutOrRemoveTiles();
                             _previewPoses.Clear();
                         }
@@ -111,7 +118,7 @@ namespace Til3mapEditor
                 case EventType.MouseDrag:
                     if (Event.current.button == 0)
                     {
-                        UpdateSelection(TilePosition);
+                        UpdateSelection(TilePose);
                         if (TilePosition != _lastTilePosition)
                         {
                             _lastTilePosition = TilePosition;
@@ -139,25 +146,23 @@ namespace Til3mapEditor
             _previewPoses.Clear();
         }
 
-        private void UpdateSelection(Vector3Int position)
+        private void UpdateSelection(TilePose pose)
         {
-            var tileSize = Editor.Tile != null ? Editor.Tile.Size : Vector3Int.one;
-            var size = position - _startPosition;
+            var tileSize = Editor.Tile != null ? pose.ApplyRotation(Editor.Tile.Size) : Vector3Int.one;
+            var size = pose.position - _startPosition;
 
-            size.x += size.x >= 0 ? 1 : -tileSize.x;
-            size.y += size.y >= 0 ? 1 : -tileSize.y;
-            size.z += size.z >= 0 ? 1 : -tileSize.z;
+            var offset = new Vector3Int(1, 0, 1);
+            // Same as Rotate(0.5) + 0.5
+            var rotatedPosOffset = (pose.ApplyRotation(-offset) + offset) / 2;
+
+            size += pose.ApplyRotation(offset);
+            size.y += 1;
 
             size.x = SnapToInt((float) size.x / tileSize.x) * tileSize.x;
             size.y = SnapToInt((float) size.y / tileSize.y) * tileSize.y;
             size.z = SnapToInt((float) size.z / tileSize.z) * tileSize.z;
 
-            var pos = _startPosition;
-            if (size.x < 0) pos.x += tileSize.x;
-            if (size.y < 0) pos.y += tileSize.y;
-            if (size.z < 0) pos.z += tileSize.z;
-
-            _selection = new BoundsInt(pos, size);
+            _selection = new BoundsInt(_startPosition + rotatedPosOffset, size);
         }
 
         private int SnapToInt(float value)
@@ -171,11 +176,11 @@ namespace Til3mapEditor
             if (tile == null) return;
 
             int rotation = Editor.Rotation;
-            var rect = Editor.Tilemap.Rect;
+            var size = TilePose.ApplyRotation(Editor.Tile.Size);
 
             foreach (var pos in _selection.allPositionsWithin)
             {
-                var refPos = pos - _selection.min;
+                var refPos = pos - _startPosition;
                 if (refPos.x % Editor.Tile.Size.x == 0 &&
                     refPos.y % Editor.Tile.Size.y == 0 &&
                     refPos.z % Editor.Tile.Size.z == 0)
@@ -194,16 +199,16 @@ namespace Til3mapEditor
             if (Editor.Tile == null || !Editor.Tile.IsValid()) return;
 
             int rotation = Editor.Rotation;
-            var rect = Editor.Tilemap.Rect;
+            var size = TilePose.ApplyRotation(Editor.Tile.Size);
 
             _previewPoses.Clear();
 
             foreach (var pos in _selection.allPositionsWithin)
             {
-                var refPos = pos - _selection.min;
-                if (refPos.x % Editor.Tile.Size.x == 0 &&
-                    refPos.y % Editor.Tile.Size.y == 0 &&
-                    refPos.z % Editor.Tile.Size.z == 0)
+                var refPos = pos - _startPosition;
+                if (refPos.x % size.x == 0 &&
+                    refPos.y % size.y == 0 &&
+                    refPos.z % size.z == 0)
                 {
                     _previewPoses.Add(new TilePose() { position = pos, rotation = rotation });
                 }
@@ -228,8 +233,8 @@ namespace Til3mapEditor
             }
             else
             {
-                var size = Editor.Tile != null ? Editor.Tile.Size : Vector3.one;
-                Handles.DrawWireCube(TilePosition + size / 2.0f, size);
+                var bounds = Editor.Tile.GetBounds(TilePose);
+                Handles.DrawWireCube(bounds.center, bounds.size);
             }
         }
     }

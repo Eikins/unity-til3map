@@ -69,7 +69,7 @@ namespace Til3mapEditor
 
             var handleMatrix = Handles.matrix;
             Handles.matrix = tilemap.transform.localToWorldMatrix;
-            DrawHandle(TilePosition);
+            DrawHandle();
             Handles.matrix = handleMatrix;
             SceneView.currentDrawingSceneView.Repaint();
         }
@@ -79,11 +79,11 @@ namespace Til3mapEditor
             return Editor.Tilemap.transform.localToWorldMatrix * TilePose.ToMatrix4x4() * Editor.Tile.TransformMatrix;
         }
 
-        private void DrawHandle(Vector3Int position)
+        private void DrawHandle()
         {
             Handles.color = Editor.IsEraserEnabled ? Color.red : IsPlaceable ? Color.white : Color.yellow;
-            var size = Editor.Tile.Size;
-            Handles.DrawWireCube(position + (Vector3) size / 2.0f, Editor.Tile.Size);
+            var bounds = Editor.Tile.GetBounds(TilePose);
+            Handles.DrawWireCube(bounds.center, bounds.size);
         }
 
     }

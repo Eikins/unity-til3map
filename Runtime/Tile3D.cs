@@ -30,8 +30,12 @@ namespace Til3map
 
         public BoundsInt GetBounds(TilePose pose)
         {
-            // Todo : Take in account the rotation.
-            return new BoundsInt(pose.position, _size);
+            var offset = new Vector3Int(1, 0, 1);
+            // Same as Rotate(0.5) + 0.5
+            var rotatedPosOffset = (pose.ApplyRotation(-offset) + offset) / 2;
+            var rotatedSize = pose.ApplyRotation(_size);
+
+            return new BoundsInt(pose.position + rotatedPosOffset, rotatedSize);
         }
 
         private void OnValidate()
