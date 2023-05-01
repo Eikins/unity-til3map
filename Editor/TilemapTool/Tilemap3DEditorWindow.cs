@@ -154,7 +154,10 @@ namespace Til3mapEditor
 
         private void Update()
         {
-            _paletteView.UpdatePreviewLoadingTasks();
+            if (_paletteView != null)
+            {
+                _paletteView.UpdatePreviewLoadingTasks();
+            }
         }
 
         private void OnDisable()
