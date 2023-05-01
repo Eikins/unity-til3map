@@ -29,7 +29,7 @@ namespace Til3mapEditor
         private PaletteView _paletteView;
         private VisualElement _tileSelectionSquareElement;
 
-        private Tile3DPalette _palette;
+        [SerializeField] private Tile3DPalette _palette;
         private Tile3D _tile;
         private Vector2Int _tileIndex2D;
 

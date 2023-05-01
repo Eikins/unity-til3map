@@ -26,8 +26,7 @@ namespace Til3mapEditor
             wnd.titleContent = new GUIContent("Tilemap 3D Editor");
         }
 
-        [SerializeField]
-        private VisualTreeAsset _visualTreeAsset;
+        [SerializeField] private VisualTreeAsset _visualTreeAsset;
 
         private TilemapEditor _editor = new TilemapEditor();
 
@@ -47,6 +46,7 @@ namespace Til3mapEditor
         // Palette View
         private PaletteView _paletteView;
         private VisualElement _tileSelectionSquareElement;
+        [SerializeField] private Tile3DPalette _palette;
 
         // Rendering
         private CommandBuffer _commandBuffer;
@@ -67,12 +67,12 @@ namespace Til3mapEditor
             // Bind Palette Field
             ObjectField paletteField = rootVisualElement.Query<ObjectField>(name = "palette-field").First();
             paletteField.objectType = typeof(Tile3DPalette);
-            paletteField.value = null;
+            paletteField.value = _palette;
             paletteField.RegisterCallback<ChangeEvent<Object>>(e =>
             {
-                var palette = e.newValue as Tile3DPalette;
-                _editor.SetPalette(palette);
-                _paletteView.SetPalette(palette);
+                _palette = e.newValue as Tile3DPalette;
+                _editor.SetPalette(_palette);
+                _paletteView.SetPalette(_palette);
             });
 
             // Initialize Palette
@@ -132,6 +132,8 @@ namespace Til3mapEditor
             _paletteView.AddManipulator(new ContentDragger());
             _paletteView.AddManipulator(new ContentZoomer());
             _paletteView.AddManipulator(tileSelector);
+
+            _paletteView.SetPalette(_palette);
         }
         #endregion
 
@@ -148,6 +150,11 @@ namespace Til3mapEditor
             EditorApplication.playModeStateChanged += OnPlayModeStateChanged;
 
             OnSelectionChange();
+        }
+
+        private void Update()
+        {
+            _paletteView.UpdatePreviewLoadingTasks();
         }
 
         private void OnDisable()

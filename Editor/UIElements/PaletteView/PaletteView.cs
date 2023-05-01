@@ -44,7 +44,7 @@ namespace Til3mapEditor.UIElements
         public ITransform ViewTransform => ViewContentContainer.transform;
         
         private Tile3DPalette _palette = null;
-        private List<PreviewElementTask> _previewLoadingTasks = new List<PreviewElementTask>();
+        private PreviewElementTask[] _previewLoadingTasks = new PreviewElementTask[0];
 
         public PaletteView()
         {
@@ -72,17 +72,19 @@ namespace Til3mapEditor.UIElements
         public void SetPalette(Tile3DPalette palette)
         {
             ViewContentContainer[0].Clear();
-            _previewLoadingTasks.Clear();
-
             _palette = palette;
 
             if (palette != null)
             {
+                if (palette.Tiles.Count != _previewLoadingTasks.Length)
+                {
+                    _previewLoadingTasks = new PreviewElementTask[palette.Tiles.Count];
+                }
+
+                int i = 0;
                 foreach (var tileEntry in palette.Tiles)
                 {
-
                     var tileElement = new Image();
-
                     tileElement.style.position = Position.Absolute;
 
                     tileElement.transform.position = (Vector2) tileEntry.Key * s_TileSize;
@@ -91,13 +93,15 @@ namespace Til3mapEditor.UIElements
                     tileElement.style.height = s_TileSize;
                     tileElement.style.backgroundColor = Color.gray;
 
-                    _previewLoadingTasks.Add(new PreviewElementTask()
+                    _previewLoadingTasks[i] = new PreviewElementTask()
                     {
                         target = tileElement,
                         previewObject = tileEntry.Value,
-                        finished = false
-                    });
+                        finished = false,
+                        delay = 5
+                    };
                     ViewContentContainer[0].Add(tileElement);
+                    i++;
                 }
             }
 
@@ -107,10 +111,13 @@ namespace Til3mapEditor.UIElements
         public void UpdatePreviewLoadingTasks()
         {
             // Not really efficient but who cares...
-            foreach (var task in _previewLoadingTasks.ToList())
+            for (int i = 0; i < _previewLoadingTasks.Length; i++)
             {
-                task.Update();
-                if (task.finished) _previewLoadingTasks.Remove(task);
+                _previewLoadingTasks[i].Update();
+                if (_previewLoadingTasks[i].finished)
+                {
+                    _previewLoadingTasks[i] = PreviewElementTask.Null;
+                }
             }
         }
 
@@ -145,15 +152,26 @@ namespace Til3mapEditor.UIElements
             public Image target;
             public Object previewObject;
             public bool finished;
+            public int delay;
 
             public void Update()
             {
+                if (target == null || previewObject == null) return;
+
                 target.image = AssetPreview.GetAssetPreview(previewObject);
-                if (!finished && !AssetPreview.IsLoadingAssetPreview(previewObject.GetInstanceID()))
+                if (delay <= 0 && !finished && !AssetPreview.IsLoadingAssetPreview(previewObject.GetInstanceID()))
                 {
                     finished = true;
                 }
+                delay = Mathf.Max(0, delay - 1);
             }
+
+            public static PreviewElementTask @Null => new PreviewElementTask() {
+                delay = 0,
+                finished = true, 
+                previewObject = null, 
+                target = null 
+            };
         }
     }
 }
