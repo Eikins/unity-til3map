@@ -68,6 +68,7 @@ namespace Til3mapEditor
             ObjectField paletteField = rootVisualElement.Query<ObjectField>(name = "palette-field").First();
             paletteField.objectType = typeof(Tile3DPalette);
             paletteField.value = _palette;
+            _editor.SetPalette(_palette);
             paletteField.RegisterCallback<ChangeEvent<Object>>(e =>
             {
                 _palette = e.newValue as Tile3DPalette;
@@ -210,12 +211,11 @@ namespace Til3mapEditor
                 CurrentTool.OnSceneGUI();
             }
 
-            if (RenderPipelineManager.currentPipeline == null)
+            if (Event.current.type == EventType.Repaint && RenderPipelineManager.currentPipeline == null)
             {
                 if (RecordCommandBuffer(sceneView.camera))
                 {
                     Graphics.ExecuteCommandBuffer(_commandBuffer);
-                    EditorUtility.SetDirty(sceneView);
                 }
             }
         }
