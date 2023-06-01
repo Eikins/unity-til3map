@@ -2,7 +2,8 @@
     "name": "Eikins.Til3map.Editor",
     "rootNamespace": "",
     "references": [
-        "GUID:925fb98c697897849b38fd8c897ce227"
+        "GUID:925fb98c697897849b38fd8c897ce227",
+        "GUID:343deaaf83e0cee4ca978e7df0b80d21"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
