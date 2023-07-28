@@ -159,6 +159,8 @@ namespace Til3mapEditor
             {
                 _paletteView.UpdatePreviewLoadingTasks();
             }
+
+            Undo.undoRedoPerformed += OnUndoRedoPerformed;
         }
 
         private void OnDisable()
@@ -219,6 +221,11 @@ namespace Til3mapEditor
                 }
             }
         }
+        
+        private void OnUndoRedoPerformed()
+        {
+            _editor.Tilemap?.OnTilesChanged?.Invoke();
+        }
         #endregion
 
         #region Drawing / Rendering
@@ -260,6 +267,7 @@ namespace Til3mapEditor
 
             Handles.zTest = CompareFunction.LessEqual;
             Handles.color = _gridColor;
+            
             for (int x = rect.xMin; x <= rect.xMax; x++)
             {
                 var p1 = new Vector3(x, height + 0.02f, rect.yMin);
@@ -274,8 +282,11 @@ namespace Til3mapEditor
                 Handles.DrawLine(p1, p2);
             }
 
+            Handles.Label(new Vector3(rect.xMin - 0.5f, height, rect.yMin - 0.5f), $"y = {height}");
+
             Handles.matrix = handleMatrix;
             Handles.zTest = handleZTest;
+
         }
 
         private bool RecordCommandBuffer(Camera camera)

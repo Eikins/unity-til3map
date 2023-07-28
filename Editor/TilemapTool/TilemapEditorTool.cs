@@ -5,10 +5,13 @@
 // Author:       Noé Masse
 // Date:         25/04/2024
 //-----------------------------------------------------------------
+using System.Collections.Generic;
+using System.Linq;
 using Til3map;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEngine.Tilemaps;
 
 namespace Til3mapEditor
 {
@@ -65,18 +68,27 @@ namespace Til3mapEditor
             return false;
         }
 
-        protected void PutOrRemoveTile(Tile3D tile, TilePose tilePose, bool erase)
+        protected void PutOrRemoveTiles(Tile3D tile, IEnumerable<TilePose> tilePoses, bool erase)
         {
             if (tile == null) return;
-            if (!Editor.Tilemap.IsInBounds(tilePose)) return;
 
             var tilemapBuilder = Editor.TilemapBuilder;
             var tilemap = Editor.Tilemap;
+            var validTilePoses = tilePoses.Where(pose => Editor.Tilemap.IsInBounds(pose));
+            if (!validTilePoses.Any()) return;
 
-            tilemapBuilder.RemoveTiles(tile.GetBounds(tilePose));
-            if (!erase)
+            Undo.RecordObject(Editor.Tilemap, erase ? "Remove Tiles" : "Add Tiles");
+
+            foreach (var pose in tilePoses)
             {
-                tilemapBuilder.AddTile(tile, tilePose);
+                if (!Editor.Tilemap.IsInBounds(pose))
+                    continue;
+
+                tilemapBuilder.RemoveTiles(tile.GetBounds(pose));
+                if (!erase)
+                {
+                    tilemapBuilder.AddTile(tile, pose);
+                }
             }
 
             EditorUtility.SetDirty(tilemap);

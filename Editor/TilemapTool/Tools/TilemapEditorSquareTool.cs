@@ -35,10 +35,10 @@ namespace Til3mapEditor
             _previewPoses = new List<TilePose>(64);
 
             _previewInstances = new InstanceBatcher<Matrix4x4>(null, false);
-            UpdatePreviewMatrices();
+            UpdatePreviewInstances();
         }
 
-        private void UpdatePreviewMatrices()
+        private void UpdatePreviewInstances()
         {
             _previewInstances.SetInstances(_previewPoses.Select((pose) => Editor.Tilemap.transform.localToWorldMatrix * pose.ToMatrix4x4() * Editor.Tile.TransformMatrix).ToList());
         }
@@ -178,6 +178,7 @@ namespace Til3mapEditor
             int rotation = Editor.Rotation;
             var size = TilePose.ApplyRotation(Editor.Tile.Size);
 
+            var poses = new List<TilePose>();
             foreach (var pos in _selection.allPositionsWithin)
             {
                 var refPos = pos - _startPosition;
@@ -185,13 +186,15 @@ namespace Til3mapEditor
                     refPos.y % size.y == 0 &&
                     refPos.z % size.z == 0)
                 {
-                    var pose = new TilePose() { 
-                        position = pos, 
-                        rotation = rotation 
-                    };
-                    PutOrRemoveTile(tile, pose, Editor.IsEraserEnabled);
+                    poses.Add(new TilePose()
+                    {
+                        position = pos,
+                        rotation = rotation
+                    });
                 }
             }
+
+            PutOrRemoveTiles(tile, poses, Editor.IsEraserEnabled);
         }
 
         private void UpdatePreviewPoses()
@@ -214,7 +217,7 @@ namespace Til3mapEditor
                 }
             }
 
-            UpdatePreviewMatrices();
+            UpdatePreviewInstances();
         }
 
         private void DrawPreviewHandle()
