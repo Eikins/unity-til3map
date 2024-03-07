@@ -94,10 +94,12 @@ namespace Til3mapEditor
             _rotateIcon.tooltip = "Rotate Tile (R)";
             _gridIcon.tooltip = "Toggle Grid";
 
-            _tools = new List<TilemapEditorTool>();
-            _tools.Add(new TilemapEditorSelectionTool(_editor));
-            _tools.Add(new TilemapEditorPaintTool(_editor));
-            _tools.Add(new TilemapEditorSquareTool(_editor));
+            _tools = new List<TilemapEditorTool>
+            {
+                new TilemapEditorSelectionTool(_editor),
+                new TilemapEditorPaintTool(_editor),
+                new TilemapEditorSquareTool(_editor)
+            };
         }
 
         private void InitTilePalette()
@@ -300,7 +302,6 @@ namespace Til3mapEditor
             if (camera.cameraType == CameraType.SceneView)
             {
                 _commandBuffer.Clear();
-                //_commandBuffer.SetGlobalMatrix(Tilemap3DRenderFeature._TilemapMatrix, tilemap.transform.localToWorldMatrix);
                 CurrentTool.DrawPreview(_commandBuffer);
                 return true;
             }
@@ -339,13 +340,14 @@ namespace Til3mapEditor
 
         private bool ProcessKeyInput(KeyCode keyCode)
         {
+            // Do not capture input when not editing.
+            if (_currentToolIndex == 0)
+                return false;
+
             switch (keyCode)
             {
                 case KeyCode.Escape:
                     CurrentTool.CancelAction();
-                    return true;
-                case KeyCode.Q:
-                    _currentToolIndex = (_currentToolIndex + 1) % _tools.Count;
                     return true;
                 case KeyCode.T:
                     _editor.IncreaseHeight();

@@ -51,14 +51,14 @@ namespace Til3mapEditor
                     {
                         foreach (var batch in _previewInstances.Batches)
                         {
-                            cmd.DrawMeshInstanced(tile.Mesh, i, material, -1, batch);
+                            cmd.DrawMeshInstanced(tile.Mesh, i, material, 0, batch);
                         }
                     }
                     else
                     {
                         foreach (var matrix in _previewInstances.Instances)
                         {
-                            cmd.DrawMesh(tile.Mesh, matrix, material, i);
+                            cmd.DrawMesh(tile.Mesh, matrix, material, i, 0);
                         }
                     }
                 }
@@ -67,7 +67,7 @@ namespace Til3mapEditor
             {
                 for (int i = 0; i < tile.Materials.Length; i++)
                 {
-                    cmd.DrawMesh(tile.Mesh, Editor.Tilemap.transform.localToWorldMatrix * TilePose.ToMatrix4x4() * tile.TransformMatrix, tile.Materials[i], i);
+                    cmd.DrawMesh(tile.Mesh, Editor.Tilemap.transform.localToWorldMatrix * TilePose.ToMatrix4x4() * tile.TransformMatrix, tile.Materials[i], i, 0);
                 }
             }
         }
